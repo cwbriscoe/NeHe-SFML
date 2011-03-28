@@ -6,10 +6,10 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Release">
-				<Option output=".\NeheTutorials" prefix_auto="1" extension_auto="1" />
+			<Target title="sfml_compile_test">
+				<Option output="bin\sfml_compile_test" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\" />
-				<Option type="1" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
@@ -18,10 +18,176 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="sfml_window_open">
+				<Option output="bin\sfml_window_open" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="sfml_window_events">
+				<Option output="bin\sfml_window_events" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="sfml_window_time">
+				<Option output="bin\sfml_window_time" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="sfml_window_opengl">
+				<Option output="bin\sfml_window_opengl" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson1">
+				<Option output="bin\nehe_lesson1" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson2">
+				<Option output="bin\nehe_lesson2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson3">
+				<Option output="bin\nehe_lesson3" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson4">
+				<Option output="bin\nehe_lesson4" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson5">
+				<Option output="bin\nehe_lesson5" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson6">
+				<Option output="bin\nehe_lesson6" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-ffunction-sections -fdata-sections -fno-rtti -fno-exceptions" />
 		</Compiler>
+		<Linker>
+			<Add option="-lsfml-main" />
+			<Add option="-mthreads" />
+			<Add option="-static-libgcc" />
+			<Add option="-static-libstdc++" />
+			<Add option="-lglu32" />
+			<Add option="-lsfml-graphics-s" />
+			<Add option="-lsfml-window-s" />
+			<Add option="-lsfml-system-s" />
+			<Add option="-Wl,--gc-sections" />
+		</Linker>
+		<Unit filename="nehe_lesson1.cpp">
+			<Option target="nehe_lesson1" />
+		</Unit>
+		<Unit filename="nehe_lesson2.cpp">
+			<Option target="nehe_lesson2" />
+		</Unit>
+		<Unit filename="nehe_lesson3.cpp">
+			<Option target="nehe_lesson3" />
+		</Unit>
+		<Unit filename="nehe_lesson4.cpp">
+			<Option target="nehe_lesson4" />
+		</Unit>
+		<Unit filename="nehe_lesson5.cpp">
+			<Option target="nehe_lesson5" />
+		</Unit>
+		<Unit filename="nehe_lesson6.cpp">
+			<Option target="nehe_lesson6" />
+		</Unit>
+		<Unit filename="sfml_compile_test.cpp">
+			<Option target="sfml_compile_test" />
+		</Unit>
+		<Unit filename="sfml_window_events.cpp">
+			<Option target="sfml_window_events" />
+		</Unit>
+		<Unit filename="sfml_window_open.cpp">
+			<Option target="sfml_window_open" />
+		</Unit>
+		<Unit filename="sfml_window_opengl.cpp">
+			<Option target="sfml_window_opengl" />
+		</Unit>
+		<Unit filename="sfml_window_time.cpp">
+			<Option target="sfml_window_time" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />
