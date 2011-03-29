@@ -139,6 +139,58 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="nehe_lesson7">
+				<Option output="bin\nehe_lesson7" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson8">
+				<Option output="bin\nehe_lesson8" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson9">
+				<Option output="bin\nehe_lesson9" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson10">
+				<Option output="bin\nehe_lesson10" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -158,6 +210,9 @@
 		<Unit filename="nehe_lesson1.cpp">
 			<Option target="nehe_lesson1" />
 		</Unit>
+		<Unit filename="nehe_lesson10.cpp">
+			<Option target="nehe_lesson10" />
+		</Unit>
 		<Unit filename="nehe_lesson2.cpp">
 			<Option target="nehe_lesson2" />
 		</Unit>
@@ -172,6 +227,15 @@
 		</Unit>
 		<Unit filename="nehe_lesson6.cpp">
 			<Option target="nehe_lesson6" />
+		</Unit>
+		<Unit filename="nehe_lesson7.cpp">
+			<Option target="nehe_lesson7" />
+		</Unit>
+		<Unit filename="nehe_lesson8.cpp">
+			<Option target="nehe_lesson8" />
+		</Unit>
+		<Unit filename="nehe_lesson9.cpp">
+			<Option target="nehe_lesson9" />
 		</Unit>
 		<Unit filename="sfml_compile_test.cpp">
 			<Option target="sfml_compile_test" />

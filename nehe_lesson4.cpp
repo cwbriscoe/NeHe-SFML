@@ -1,7 +1,7 @@
 /*
  *		This Code Was Created By Jeff Molofee 2000
  *		A HUGE Thanks To Fredric Echols For Cleaning Up
- *		And Optimizing This Code, Making It More Flexible!
+ *		And Optimizing The Base Code, Making It More Flexible!
  *		If You've Found This Code Useful, Please Let Me Know.
  *		Visit My Site At nehe.gamedev.net
  */
@@ -10,6 +10,7 @@
 
 bool	keys[512];	        // Array Used For The Keyboard Routine
 bool	fullscreen=FALSE;	// Fullscreen Flag Set To Fullscreen Mode By Default
+bool    vsync=TRUE;         // Turn VSYNC on/off
 
 GLfloat	rtri;				// Angle For The Triangle ( NEW )
 GLfloat	rquad;				// Angle For The Quad ( NEW )
@@ -114,7 +115,15 @@ int main()
                 (fullscreen ? sf::Style::Fullscreen : sf::Style::Resize | sf::Style::Close));
                 ReSizeGLScene(App.GetWidth(),App.GetHeight());
             }
+
+            if (keys[sf::Key::F5] == TRUE) {
+                vsync = !vsync;
+                keys[sf::Key::F1] = FALSE;
+            }
         }
+
+        // Turn VSYNC on so that animations run at a more reasonable speed on new CPU's/GPU's.
+        App.UseVerticalSync(vsync);
 
         // Set the active window before using OpenGL commands
         // It's useless here because active window is always the same,

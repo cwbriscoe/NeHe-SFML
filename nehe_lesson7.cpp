@@ -11,12 +11,22 @@
 bool	keys[512];	        // Array Used For The Keyboard Routine
 bool	fullscreen=FALSE;	// Fullscreen Flag Set To Fullscreen Mode By Default
 bool    vsync=TRUE;         // Turn VSYNC on/off
+bool	light;				// Lighting ON/OFF ( NEW )
+bool	lp;					// L Pressed? ( NEW )
+bool	fp;					// F Pressed? ( NEW )
 
-GLfloat	xrot;				// X Rotation ( NEW )
-GLfloat	yrot;				// Y Rotation ( NEW )
-GLfloat	zrot;				// Z Rotation ( NEW )
+GLfloat	xrot;				// X Rotation
+GLfloat	yrot;				// Y Rotation
+GLfloat xspeed;				// X Rotation Speed
+GLfloat yspeed;				// Y Rotation Speed
+GLfloat	z=-5.0f;			// Depth Into The Screen
 
-GLuint	texture[1];			// Storage For One Texture ( NEW )
+GLfloat LightAmbient[]=		{ 0.5f, 0.5f, 0.5f, 1.0f };
+GLfloat LightDiffuse[]=		{ 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat LightPosition[]=	{ 0.0f, 0.0f, 2.0f, 1.0f };
+
+GLuint	filter;				// Which Filter To Use
+GLuint	texture[3];			// Storage For 3 Textures
 
 int LoadGLTextures()									// Load Bitmaps And Convert To Textures
 {
@@ -28,13 +38,25 @@ int LoadGLTextures()									// Load Bitmaps And Convert To Textures
 	{
 		Status=TRUE;									// Set The Status To TRUE
 
-		glGenTextures(1, &texture[0]);					// Create The Texture
+        glGenTextures(3, &texture[0]);					// Create Three Textures
 
-		// Typical Texture Generation Using Data From The Bitmap
+		// Create Nearest Filtered Texture
 		glBindTexture(GL_TEXTURE_2D, texture[0]);
-		glTexImage2D(GL_TEXTURE_2D, 0, 4, Image.GetWidth(), Image.GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, Image.GetPixelsPtr());
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, Image.GetWidth(), Image.GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, Image.GetPixelsPtr());
+
+		// Create Linear Filtered Texture
+		glBindTexture(GL_TEXTURE_2D, texture[1]);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, Image.GetWidth(), Image.GetHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, Image.GetPixelsPtr());
+
+		// Create MipMapped Texture
+		glBindTexture(GL_TEXTURE_2D, texture[2]);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_NEAREST);
+		gluBuild2DMipmaps(GL_TEXTURE_2D, 3, Image.GetWidth(), Image.GetHeight(), GL_RGBA, GL_UNSIGNED_BYTE, Image.GetPixelsPtr());
 	}
 
 	return Status;										// Return The Status
@@ -61,69 +83,78 @@ GLvoid ReSizeGLScene(GLsizei width, GLsizei height)		// Resize And Initialize Th
 
 int InitGL()										    // All Setup For OpenGL Goes Here
 {
-    if (!LoadGLTextures())								// Jump To Texture Loading Routine ( NEW )
+    if (!LoadGLTextures())								// Jump To Texture Loading Routine
 	{
 		return FALSE;									// If Texture Didn't Load Return FALSE
 	}
 
-    glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping ( NEW )
+	glEnable(GL_TEXTURE_2D);							// Enable Texture Mapping
 	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
 	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);				// Black Background
 	glClearDepth(1.0f);									// Depth Buffer Setup
 	glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
 	glDepthFunc(GL_LEQUAL);								// The Type Of Depth Testing To Do
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);		// Setup The Ambient Light
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);		// Setup The Diffuse Light
+	glLightfv(GL_LIGHT1, GL_POSITION,LightPosition);	// Position The Light
+	glEnable(GL_LIGHT1);								// Enable Light One
 	return TRUE;										// Initialization Went OK
 }
 
-int DrawGLScene()	    								// Here's Where We Do All The Drawing
+int DrawGLScene()									    // Here's Where We Do All The Drawing
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
 	glLoadIdentity();									// Reset The View
-	glTranslatef(0.0f,0.0f,-5.0f);
+	glTranslatef(0.0f,0.0f,z);
 
 	glRotatef(xrot,1.0f,0.0f,0.0f);
 	glRotatef(yrot,0.0f,1.0f,0.0f);
-	glRotatef(zrot,0.0f,0.0f,1.0f);
 
-	glBindTexture(GL_TEXTURE_2D, texture[0]);
+	glBindTexture(GL_TEXTURE_2D, texture[filter]);
 
 	glBegin(GL_QUADS);
 		// Front Face
+		glNormal3f( 0.0f, 0.0f, 1.0f);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);
 		// Back Face
+		glNormal3f( 0.0f, 0.0f,-1.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);
 		// Top Face
+		glNormal3f( 0.0f, 1.0f, 0.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f,  1.0f,  1.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f,  1.0f,  1.0f);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);
 		// Bottom Face
+		glNormal3f( 0.0f,-1.0f, 0.0f);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f, -1.0f, -1.0f);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);
 		// Right face
+		glNormal3f( 1.0f, 0.0f, 0.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f, -1.0f);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f, -1.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  1.0f);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  1.0f);
 		// Left Face
+		glNormal3f(-1.0f, 0.0f, 0.0f);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f, -1.0f);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  1.0f);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  1.0f);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f, -1.0f);
 	glEnd();
 
-	xrot+=0.3f;
-	yrot+=0.2f;
-	zrot+=0.4f;
+	xrot+=xspeed;
+	yrot+=yspeed;
 	return TRUE;										// Keep Going
 }
 
@@ -172,6 +203,47 @@ int main()
             if (keys[sf::Key::F5] == TRUE) {
                 vsync = !vsync;
                 keys[sf::Key::F1] = FALSE;
+            }
+
+            if (keys[sf::Key::L] && !lp) {
+                lp=TRUE;
+                light=!light;
+                if (!light) {
+                    glDisable(GL_LIGHTING);
+                } else {
+                    glEnable(GL_LIGHTING);
+                }
+            }
+            if (!keys[sf::Key::L]) {
+                lp=FALSE;
+            }
+            if (keys[sf::Key::F] && !fp) {
+                fp=TRUE;
+                filter+=1;
+                if (filter>2) {
+                    filter=0;
+                }
+            }
+            if (!keys[sf::Key::F]) {
+                fp=FALSE;
+            }
+            if (keys[sf::Key::PageUp]) {
+                z-=0.02f;
+            }
+            if (keys[sf::Key::PageDown]) {
+                z+=0.02f;
+            }
+            if (keys[sf::Key::Up]) {
+                xspeed-=0.01f;
+            }
+            if (keys[sf::Key::Down]) {
+                xspeed+=0.01f;
+            }
+            if (keys[sf::Key::Right]) {
+                yspeed+=0.01f;
+            }
+            if (keys[sf::Key::Left]) {
+                yspeed-=0.01f;
             }
         }
 

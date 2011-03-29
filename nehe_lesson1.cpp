@@ -10,6 +10,7 @@
 
 bool	keys[512];	        // Array Used For The Keyboard Routine
 bool	fullscreen=FALSE;	// Fullscreen Flag Set To Fullscreen Mode By Default
+bool    vsync=TRUE;         // Turn VSYNC on/off
 
 GLvoid ReSizeGLScene(GLsizei width, GLsizei height)		// Resize And Initialize The GL Window
 {
@@ -89,7 +90,15 @@ int main()
                 (fullscreen ? sf::Style::Fullscreen : sf::Style::Resize | sf::Style::Close));
                 ReSizeGLScene(App.GetWidth(),App.GetHeight());
             }
+
+            if (keys[sf::Key::F5] == TRUE) {
+                vsync = !vsync;
+                keys[sf::Key::F1] = FALSE;
+            }
         }
+
+        // Turn VSYNC on so that animations run at a more reasonable speed on new CPU's/GPU's.
+        App.UseVerticalSync(vsync);
 
         // Set the active window before using OpenGL commands
         // It's useless here because active window is always the same,
