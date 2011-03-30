@@ -191,6 +191,32 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="nehe_lesson11">
+				<Option output="nehe_lesson11" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="nehe_lesson12">
+				<Option output="nehe_lesson12" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-Wall" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -212,6 +238,12 @@
 		</Unit>
 		<Unit filename="nehe_lesson10.cpp">
 			<Option target="nehe_lesson10" />
+		</Unit>
+		<Unit filename="nehe_lesson11.cpp">
+			<Option target="nehe_lesson11" />
+		</Unit>
+		<Unit filename="nehe_lesson12.cpp">
+			<Option target="nehe_lesson12" />
 		</Unit>
 		<Unit filename="nehe_lesson2.cpp">
 			<Option target="nehe_lesson2" />
