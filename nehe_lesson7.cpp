@@ -8,12 +8,9 @@
 
 #include <SFML/Graphics.hpp>
 
-bool	keys[512];	        // Array Used For The Keyboard Routine
 bool	fullscreen=FALSE;	// Fullscreen Flag Set To Fullscreen Mode By Default
 bool    vsync=TRUE;         // Turn VSYNC on/off
 bool	light;				// Lighting ON/OFF ( NEW )
-bool	lp;					// L Pressed? ( NEW )
-bool	fp;					// F Pressed? ( NEW )
 
 GLfloat	xrot;				// X Rotation
 GLfloat	yrot;				// Y Rotation
@@ -177,74 +174,65 @@ int main()
             if (Event.Type == sf::Event::Closed)
                 App.Close();
 
-            // Escape key : exit
-            if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
-                App.Close();
-
-            // keep track of key presses and releases
-            if (Event.Type == sf::Event::KeyPressed)
-                keys[Event.Key.Code] = TRUE;
-            if (Event.Type == sf::Event::KeyReleased)
-                keys[Event.Key.Code] = FALSE;
-
             // Resize event : adjust viewport
             if (Event.Type == sf::Event::Resized)
                 ReSizeGLScene(Event.Size.Width, Event.Size.Height);
 
-            // Toggle fullscreen mode if F1 is pressed
-            if (keys[sf::Key::F1] == TRUE) {
-                fullscreen = !fullscreen;
-                keys[sf::Key::F1] = FALSE;
-                App.Create(fullscreen ? sf::VideoMode::GetDesktopMode() : sf::VideoMode(800, 600, 32) , "SFML/NeHe OpenGL",
-                (fullscreen ? sf::Style::Fullscreen : sf::Style::Resize | sf::Style::Close));
-                ReSizeGLScene(App.GetWidth(),App.GetHeight());
-            }
-
-            if (keys[sf::Key::F5] == TRUE) {
-                vsync = !vsync;
-                keys[sf::Key::F1] = FALSE;
-            }
-
-            if (keys[sf::Key::L] && !lp) {
-                lp=TRUE;
-                light=!light;
-                if (!light) {
-                    glDisable(GL_LIGHTING);
-                } else {
-                    glEnable(GL_LIGHTING);
+            // Handle Keyboard Events
+            if (Event.Type == sf::Event::KeyPressed) {
+                switch (Event.Key.Code) {
+                    case sf::Key::Escape:
+                        App.Close();
+                        break;
+                    case sf::Key::F1:
+                        fullscreen = !fullscreen;
+                        App.Create(fullscreen ? sf::VideoMode::GetDesktopMode() : sf::VideoMode(800, 600, 32) , "SFML/NeHe OpenGL",
+                        (fullscreen ? sf::Style::Fullscreen : sf::Style::Resize | sf::Style::Close));
+                        ReSizeGLScene(App.GetWidth(),App.GetHeight());
+                        break;
+                    case sf::Key::F5:
+                        vsync = !vsync;
+                        break;
+                    case sf::Key::L:
+                        light=!light;
+                        if (!light) {
+                            glDisable(GL_LIGHTING);
+                        } else {
+                            glEnable(GL_LIGHTING);
+                        }
+                        break;
+                    case sf::Key::F:
+                        filter+=1;
+                        if (filter>2) {
+                            filter=0;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
-            if (!keys[sf::Key::L]) {
-                lp=FALSE;
-            }
-            if (keys[sf::Key::F] && !fp) {
-                fp=TRUE;
-                filter+=1;
-                if (filter>2) {
-                    filter=0;
-                }
-            }
-            if (!keys[sf::Key::F]) {
-                fp=FALSE;
-            }
-            if (keys[sf::Key::PageUp]) {
-                z-=0.02f;
-            }
-            if (keys[sf::Key::PageDown]) {
-                z+=0.02f;
-            }
-            if (keys[sf::Key::Up]) {
-                xspeed-=0.01f;
-            }
-            if (keys[sf::Key::Down]) {
-                xspeed+=0.01f;
-            }
-            if (keys[sf::Key::Right]) {
-                yspeed+=0.01f;
-            }
-            if (keys[sf::Key::Left]) {
-                yspeed-=0.01f;
-            }
+        }
+
+        //Handle movement keys
+        const sf::Input& Input = App.GetInput();
+
+        if (Input.IsKeyDown(sf::Key::PageUp)) {
+            z-=0.02f;
+        }
+        if (Input.IsKeyDown(sf::Key::PageDown)) {
+            z+=0.02f;
+        }
+        if (Input.IsKeyDown(sf::Key::Up)) {
+            xspeed-=0.01f;
+        }
+        if (Input.IsKeyDown(sf::Key::Down)) {
+            xspeed+=0.01f;
+        }
+        if (Input.IsKeyDown(sf::Key::Right)) {
+            yspeed+=0.01f;
+        }
+        if (Input.IsKeyDown(sf::Key::Left)) {
+            yspeed-=0.01f;
         }
 
         // Turn VSYNC on so that animations run at a more reasonable speed on new CPU's/GPU's.

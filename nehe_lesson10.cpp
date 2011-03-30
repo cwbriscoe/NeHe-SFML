@@ -9,13 +9,10 @@
 #include <SFML/Graphics.hpp>
 #include <stdio.h>			// Header File For Standard Input/Output
 
-bool	keys[512];	        // Array Used For The Keyboard Routine
 bool	fullscreen=FALSE;	// Fullscreen Flag Set To Fullscreen Mode By Default
 bool    vsync=TRUE;         // Turn VSYNC on/off
 
 bool	blend;				// Blending ON/OFF
-bool	bp;					// B Pressed?
-bool	fp;					// F Pressed?
 
 const float piover180 = 0.0174532925f;
 float heading;
@@ -233,94 +230,85 @@ int main()
             if (Event.Type == sf::Event::Closed)
                 App.Close();
 
-            // Escape key : exit
-            if ((Event.Type == sf::Event::KeyPressed) && (Event.Key.Code == sf::Key::Escape))
-                App.Close();
-
-            // keep track of key presses and releases
-            if (Event.Type == sf::Event::KeyPressed)
-                keys[Event.Key.Code] = TRUE;
-            if (Event.Type == sf::Event::KeyReleased)
-                keys[Event.Key.Code] = FALSE;
-
             // Resize event : adjust viewport
             if (Event.Type == sf::Event::Resized)
                 ReSizeGLScene(Event.Size.Width, Event.Size.Height);
 
-            // Toggle fullscreen mode if F1 is pressed
-            if (keys[sf::Key::F1] == TRUE) {
-                fullscreen = !fullscreen;
-                keys[sf::Key::F1] = FALSE;
-                App.Create(fullscreen ? sf::VideoMode::GetDesktopMode() : sf::VideoMode(800, 600, 32) , "SFML/NeHe OpenGL",
-                (fullscreen ? sf::Style::Fullscreen : sf::Style::Resize | sf::Style::Close));
-                ReSizeGLScene(App.GetWidth(),App.GetHeight());
+            // Handle Keyboard Events
+            if (Event.Type == sf::Event::KeyPressed) {
+                switch (Event.Key.Code) {
+                    case sf::Key::Escape:
+                        App.Close();
+                        break;
+                    case sf::Key::F1:
+                        fullscreen = !fullscreen;
+                        App.Create(fullscreen ? sf::VideoMode::GetDesktopMode() : sf::VideoMode(800, 600, 32) , "SFML/NeHe OpenGL",
+                        (fullscreen ? sf::Style::Fullscreen : sf::Style::Resize | sf::Style::Close));
+                        ReSizeGLScene(App.GetWidth(),App.GetHeight());
+                        break;
+                    case sf::Key::F5:
+                        vsync = !vsync;
+                        break;
+                    case sf::Key::F:
+                        filter+=1;
+                        if (filter>2) {
+                            filter=0;
+                        }
+                        break;
+                    case sf::Key::B:
+                        blend = !blend;
+                        if(blend) {
+                            glEnable(GL_BLEND);			// Turn Blending On
+                            glDisable(GL_DEPTH_TEST);	// Turn Depth Testing Off
+                        } else {
+                            glDisable(GL_BLEND);		// Turn Blending Off
+                            glEnable(GL_DEPTH_TEST);	// Turn Depth Testing On
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
+        }
 
-            if (keys[sf::Key::F5] == TRUE) {
-                vsync = !vsync;
-                keys[sf::Key::F1] = FALSE;
-            }
+        //Handle movement keys
+        const sf::Input& Input = App.GetInput();
 
-            if (keys[sf::Key::B] && !bp) {
-                bp=TRUE;
-                blend = !blend;
-                if(blend) {
-                    glEnable(GL_BLEND);			// Turn Blending On
-                    glDisable(GL_DEPTH_TEST);	// Turn Depth Testing Off
-                } else {
-                    glDisable(GL_BLEND);		// Turn Blending Off
-                    glEnable(GL_DEPTH_TEST);	// Turn Depth Testing On
-                }
+        if (Input.IsKeyDown(sf::Key::PageUp)) {
+            z-=0.02f;
+            lookupdown-= 1.0f;
+        }
+        if (Input.IsKeyDown(sf::Key::PageDown)) {
+            z+=0.02f;
+            lookupdown+= 1.0f;
+        }
+        if (Input.IsKeyDown(sf::Key::Up)) {
+            xpos -= (float)sin(heading*piover180) * 0.05f;
+            zpos -= (float)cos(heading*piover180) * 0.05f;
+            if (walkbiasangle >= 359.0f) {
+                walkbiasangle = 0.0f;
+            } else {
+                walkbiasangle+= 10;
             }
-            if (!keys[sf::Key::B]) {
-                bp=FALSE;
+            walkbias = (float)sin(walkbiasangle * piover180)/20.0f;
+        }
+        if (Input.IsKeyDown(sf::Key::Down)) {
+            xpos += (float)sin(heading*piover180) * 0.05f;
+            zpos += (float)cos(heading*piover180) * 0.05f;
+            if (walkbiasangle <= 1.0f) {
+                walkbiasangle = 359.0f;
+            } else {
+                walkbiasangle-= 10;
             }
-            if (keys[sf::Key::F] && !fp) {
-                fp=TRUE;
-                filter+=1;
-                if (filter>2) {
-                    filter=0;
-                }
-            }
-            if (!keys[sf::Key::F]) {
-                fp=FALSE;
-            }
-            if (keys[sf::Key::PageUp]) {
-                z-=0.02f;
-                lookupdown-= 1.0f;
-            }
-            if (keys[sf::Key::PageDown]) {
-                z+=0.02f;
-                lookupdown+= 1.0f;
-            }
-            if (keys[sf::Key::Up]) {
-                xpos -= (float)sin(heading*piover180) * 0.05f;
-                zpos -= (float)cos(heading*piover180) * 0.05f;
-                if (walkbiasangle >= 359.0f) {
-                    walkbiasangle = 0.0f;
-                } else {
-                    walkbiasangle+= 10;
-                }
-                walkbias = (float)sin(walkbiasangle * piover180)/20.0f;
-            }
-            if (keys[sf::Key::Down]) {
-                xpos += (float)sin(heading*piover180) * 0.05f;
-                zpos += (float)cos(heading*piover180) * 0.05f;
-                if (walkbiasangle <= 1.0f) {
-                    walkbiasangle = 359.0f;
-                } else {
-                    walkbiasangle-= 10;
-                }
-                walkbias = (float)sin(walkbiasangle * piover180)/20.0f;
-            }
-            if (keys[sf::Key::Right]) {
-                heading -= 1.0f;
-                yrot = heading;
-            }
-            if (keys[sf::Key::Left]) {
-                heading += 1.0f;
-                yrot = heading;
-            }
+            walkbias = (float)sin(walkbiasangle * piover180)/20.0f;
+        }
+        if (Input.IsKeyDown(sf::Key::Right)) {
+            heading -= 1.0f;
+            yrot = heading;
+        }
+        if (Input.IsKeyDown(sf::Key::Left)) {
+            heading += 1.0f;
+            yrot = heading;
         }
 
         // Turn VSYNC on so that animations run at a more reasonable speed on new CPU's/GPU's.
